@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>HTML Editor</title>
+		
+		<link href="https://fonts.googleapis.com/css?family=Baloo+Paaji+2&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="editor/editor.css" />
+		<link rel="stylesheet" href="codemirror/lib/codemirror.css" />
+		<link rel="stylesheet" href="codemirror/addon/dialog/dialog.css" />
+		<!-- CodeMirror Themes -->
+		<link rel="stylesheet" href="codemirror/theme/3024-day.css" />
+		<link rel="stylesheet" href="codemirror/theme/3024-night.css" />
+		<link rel="stylesheet" href="codemirror/theme/abcdef.css" />
+		<link rel="stylesheet" href="codemirror/theme/ambiance-mobile.css" />
+		<link rel="stylesheet" href="codemirror/theme/ambiance.css" />
+		<link rel="stylesheet" href="codemirror/theme/ayu-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/ayu-mirage.css" />
+		<link rel="stylesheet" href="codemirror/theme/base16-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/base16-light.css" />
+		<link rel="stylesheet" href="codemirror/theme/bespin.css" />
+		<link rel="stylesheet" href="codemirror/theme/blackboard.css" />
+		<link rel="stylesheet" href="codemirror/theme/cobalt.css" />
+		<link rel="stylesheet" href="codemirror/theme/colorforth.css" />
+		<link rel="stylesheet" href="codemirror/theme/darcula.css" />
+		<link rel="stylesheet" href="codemirror/theme/dracula.css" />
+		<link rel="stylesheet" href="codemirror/theme/duotone-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/duotone-light.css" />
+		<link rel="stylesheet" href="codemirror/theme/eclipse.css" />
+		<link rel="stylesheet" href="codemirror/theme/elegant.css" />
+		<link rel="stylesheet" href="codemirror/theme/erlang-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/gruvbox-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/hopscotch.css" />
+		<link rel="stylesheet" href="codemirror/theme/icecoder.css" />
+		<link rel="stylesheet" href="codemirror/theme/idea.css" />
+		<link rel="stylesheet" href="codemirror/theme/isotope.css" />
+		<link rel="stylesheet" href="codemirror/theme/lesser-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/liquibyte.css" />
+		<link rel="stylesheet" href="codemirror/theme/lucario.css" />
+		<link rel="stylesheet" href="codemirror/theme/material-darker.css" />
+		<link rel="stylesheet" href="codemirror/theme/material-ocean.css" />
+		<link rel="stylesheet" href="codemirror/theme/material-palenight.css" />
+		<link rel="stylesheet" href="codemirror/theme/material.css" />
+		<link rel="stylesheet" href="codemirror/theme/mbo.css" />
+		<link rel="stylesheet" href="codemirror/theme/mdn-like.css" />
+		<link rel="stylesheet" href="codemirror/theme/midnight.css" />
+		<link rel="stylesheet" href="codemirror/theme/monokai.css" />
+		<link rel="stylesheet" href="codemirror/theme/moxer.css" />
+		<link rel="stylesheet" href="codemirror/theme/neat.css" />
+		<link rel="stylesheet" href="codemirror/theme/neo.css" />
+		<link rel="stylesheet" href="codemirror/theme/night.css" />
+		<link rel="stylesheet" href="codemirror/theme/nord.css" />
+		<link rel="stylesheet" href="codemirror/theme/oceanic-next.css" />
+		<link rel="stylesheet" href="codemirror/theme/panda-syntax.css" />
+		<link rel="stylesheet" href="codemirror/theme/paraiso-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/paraiso-light.css" />
+		<link rel="stylesheet" href="codemirror/theme/pastel-on-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/railscasts.css" />
+		<link rel="stylesheet" href="codemirror/theme/rubyblue.css" />
+		<link rel="stylesheet" href="codemirror/theme/seti.css" />
+		<link rel="stylesheet" href="codemirror/theme/shadowfox.css" />
+		<link rel="stylesheet" href="codemirror/theme/solarized.css" />
+		<link rel="stylesheet" href="codemirror/theme/ssms.css" />
+		<link rel="stylesheet" href="codemirror/theme/the-matrix.css" />
+		<link rel="stylesheet" href="codemirror/theme/tomorrow-night-bright.css" />
+		<link rel="stylesheet" href="codemirror/theme/tomorrow-night-eighties.css" />
+		<link rel="stylesheet" href="codemirror/theme/ttcn.css" />
+		<link rel="stylesheet" href="codemirror/theme/twilight.css" />
+		<link rel="stylesheet" href="codemirror/theme/vibrant-ink.css" />
+		<link rel="stylesheet" href="codemirror/theme/xq-dark.css" />
+		<link rel="stylesheet" href="codemirror/theme/xq-light.css" />
+		<link rel="stylesheet" href="codemirror/theme/yeti.css" />
+		<link rel="stylesheet" href="codemirror/theme/yonce.css" />
+		<link rel="stylesheet" href="codemirror/theme/zenburn.css" />
+	</head>
+	
+	<body>
+		<div class="navbar">
+			<div class="menuitem dropdown">
+				<label>File</label>
+				<div class="dropdown-content">
+					<label class="menuitem" id="file-new">New<span class="shortcut">Ctrl+N</span></label>
+					<label class="menuitem" for="file-open">
+					<input type="file" style="display: none" multiple="false" id="file-open" />
+					Open<span class="shortcut">Ctrl+O</span>
+					</label>
+					<label class="menuitem" id="file-save">Save<span class="shortcut">Ctrl+S</span></label>
+					<label class="menuitem" id="file-close">Close</label>				
+				</div>
+			</div>
+			<div class="menuitem dropdown">
+				<label>Edit</label>
+				<div class="dropdown-content">
+					<label class="menuitem" id="edit-undo">Undo<span class="shortcut">Ctrl+Z</span></label>
+					<label class="menuitem" id="edit-redo">Redo<span class="shortcut">Ctrl+Y</span></label>
+					<label class="menuitem" id="edit-selectall">Select All<span class="shortcut">Ctrl+A</span></label>
+					<label class="menuitem" id="edit-deleteline">Delete Line<span class="shortcut">Ctrl+D</span></label>
+					<label class="menuitem" id="edit-indent">Indent<span class="shortcut">Ctrl+]</span></label>
+					<label class="menuitem" id="edit-dedent">Dedent<span class="shortcut">Ctrl+[</span></label>
+					<label class="menuitem" id="edit-autoindent">Auto Indent<span class="shortcut">Shift+Tab</span></label>
+					<label class="menuitem" id="edit-closetag">Close Tag<span class="shortcut">Ctrl+.</span></label>
+				</div>
+			</div>
+			<div class="menuitem dropdown">
+				<label>Search</label>
+				<div class="dropdown-content">
+					<label class="menuitem" id="search-find">Find<span class="shortcut">Ctrl+F</span></label>
+					<label class="menuitem" id="search-findnext">Find Next<span class="shortcut">Ctrl+G</span></label>
+					<label class="menuitem" id="search-findprev">Find Previous<span class="shortcut">Ctrl+Shift+G</span></label>
+					<label class="menuitem" id="search-replace">Replace<span class="shortcut">Ctrl+Shift+F</span></label>
+					<label class="menuitem" id="search-replaceall">Replace All<span class="shortcut">Ctrl+Shift+R</span></label>
+					<label class="menuitem" id="search-jumptoline">Goto Line<span class="shortcut">Alt+G</span></label>
+					<label class="menuitem" id="search-tomatchingtag">Goto Matching Tag<span class="shortcut">Ctrl-J</span></label>
+				</div>
+			</div>
+			<div class="menuitem dropdown">
+				<label>View</label>
+				<div class="dropdown-content">
+					<div class="menuitem dropright">
+						<label>Select Theme <span class="shortcut">&gt;</span></label>
+						<div class="dropright-content">
+							<label class="menuitem theme-selector">default</label>
+							<label class="menuitem theme-selector">3024-day</label>
+							<label class="menuitem theme-selector">3024-night</label>
+							<label class="menuitem theme-selector">abcdef</label>
+							<label class="menuitem theme-selector">ambiance-mobile</label>
+							<label class="menuitem theme-selector">ambiance</label>
+							<label class="menuitem theme-selector">ayu-dark</label>
+							<label class="menuitem theme-selector">ayu-mirage</label>
+							<label class="menuitem theme-selector">base16-dark</label>
+							<label class="menuitem theme-selector">base16-light</label>
+							<label class="menuitem theme-selector">bespin</label>
+							<label class="menuitem theme-selector">blackboard</label>
+							<label class="menuitem theme-selector">cobalt</label>
+							<label class="menuitem theme-selector">colorforth</label>
+							<label class="menuitem theme-selector">darcula</label>
+							<label class="menuitem theme-selector">dracula</label>
+							<label class="menuitem theme-selector">duotone-dark</label>
+							<label class="menuitem theme-selector">duotone-light</label>
+							<label class="menuitem theme-selector">eclipse</label>
+							<label class="menuitem theme-selector">elegant</label>
+							<label class="menuitem theme-selector">erlang-dark</label>
+							<label class="menuitem theme-selector">gruvbox-dark</label>
+							<label class="menuitem theme-selector">hopscotch</label>
+							<label class="menuitem theme-selector">icecoder</label>
+							<label class="menuitem theme-selector">idea</label>
+							<label class="menuitem theme-selector">isotope</label>
+							<label class="menuitem theme-selector">lesser-dark</label>
+							<label class="menuitem theme-selector">liquibyte</label>
+							<label class="menuitem theme-selector">lucario</label>
+							<label class="menuitem theme-selector">material-darker</label>
+							<label class="menuitem theme-selector">material-ocean</label>
+							<label class="menuitem theme-selector">material-palenight</label>
+							<label class="menuitem theme-selector">material</label>
+							<label class="menuitem theme-selector">mbo</label>
+							<label class="menuitem theme-selector">mdn-like</label>
+							<label class="menuitem theme-selector">midnight</label>
+							<label class="menuitem theme-selector">monokai</label>
+							<label class="menuitem theme-selector">moxer</label>
+							<label class="menuitem theme-selector">neat</label>
+							<label class="menuitem theme-selector">neo</label>
+							<label class="menuitem theme-selector">night</label>
+							<label class="menuitem theme-selector">nord</label>
+							<label class="menuitem theme-selector">oceanic-next</label>
+							<label class="menuitem theme-selector">panda-syntax</label>
+							<label class="menuitem theme-selector">paraiso-dark</label>
+							<label class="menuitem theme-selector">paraiso-light</label>
+							<label class="menuitem theme-selector">pastel-on-dark</label>
+							<label class="menuitem theme-selector">railscasts</label>
+							<label class="menuitem theme-selector">rubyblue</label>
+							<label class="menuitem theme-selector">seti</label>
+							<label class="menuitem theme-selector">shadowfox</label>
+							<label class="menuitem theme-selector">solarized</label>
+							<label class="menuitem theme-selector">ssms</label>
+							<label class="menuitem theme-selector">the-matrix</label>
+							<label class="menuitem theme-selector">tomorrow-night-bright</label>
+							<label class="menuitem theme-selector">tomorrow-night-eighties</label>
+							<label class="menuitem theme-selector">ttcn</label>
+							<label class="menuitem theme-selector">twilight</label>
+							<label class="menuitem theme-selector">vibrant-ink</label>
+							<label class="menuitem theme-selector">xq-dark</label>
+							<label class="menuitem theme-selector">xq-light</label>
+							<label class="menuitem theme-selector">yeti</label>
+							<label class="menuitem theme-selector">yonce</label>
+							<label class="menuitem theme-selector">zenburn</label>
+						</div>
+					</div>
+					<label class="menuitem" for="view-linewrapping">
+						<input type="checkbox" id="view-linewrapping" />
+						Line Wrapping
+					</label>
+					<label class="menuitem" for="view-linenumbers" >
+						<input type="checkbox" id="view-linenumbers" />
+						Line Numbers
+					</label>
+				</div>
+			</div>
+			<div class="menuitem dropdown">
+				<label>Options</label>
+				<div class="dropdown-content">
+					<label class="menuitem" id="options-indentunit">Indent Unit</label>
+					<label class="menuitem" id="options-tabsize">Tab Size</label>
+					<label class="menuitem" for="options-smartindent" >
+						<input type="checkbox" id="options-smartindent" />
+						Smart Indent
+					</label>
+					<label class="menuitem" for="options-indentwithtabs">
+						<input type="checkbox" id="options-indentwithtabs" />
+						Indent With Tabs
+					</label>
+					<label class="menuitem" for="options-autoclosetags">
+						<input type="checkbox" id="options-autoclosetags" />
+						Auto Close Tags
+					</label>
+					<label class="menuitem" id="options-resettodefault">Reset to Default</label>
+				</div>
+			</div>
+			<label class="menuitem static" style="float: right">HTML Editor v0.0.1 - <span id="page-title"></span></label>
+		</div>
+
+		<div class="split">
+			<div class="box" id="editor-parent"></div>
+			<div class="box" id="preview-parent" style="z-index: 3"></div>
+		</div>
+	</body>
+	
+	<script src="split_js/split.min.js"></script>
+	<script src="codemirror/lib/codemirror.js"></script>
+	<script src="codemirror/mode/css/css.js"></script>
+	<script src="codemirror/mode/xml/xml.js"></script>
+	<script src="codemirror/mode/javascript/javascript.js"></script>
+	<script src="codemirror/mode/htmlmixed/htmlmixed.js"></script>
+	<script src="codemirror/addon/dialog/dialog.js"></script>
+	<script src="codemirror/addon/search/searchcursor.js"></script>
+	<script src="codemirror/addon/search/search.js"></script>
+	<script src="codemirror/addon/search/jump-to-line.js"></script>
+	<script src="codemirror/addon/fold/xml-fold.js"></script>
+	<script src="codemirror/addon/edit/matchtags.js"></script>
+	<script src="codemirror/addon/edit/closetag.js"></script>
+	<script src="editor/editor.js"></script>
+	<script>
+		initEditor();
+	</script>
+</html>

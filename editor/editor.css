@@ -1,7 +1,13 @@
-/*************
- * Navigation
- *************/
+/**********************************
+* editor.css - HTML Editor        *
+* Distributed under MIT licence,  *
+* see licence file                *
+**********************************/
 
+
+/*******
+* Page *
+*******/
 html, body {
 	height: 100vh;
 }
@@ -11,10 +17,11 @@ body {
 	margin: 0;
  }
  
-.navbar {
+/* Menubar */
+.menubar {
 	overflow: hidden;
 	background-color: #333;
-	border-bottom: 1px solid #777;
+	z-index: 0;
 }
 
 .menuitem {
@@ -84,18 +91,70 @@ body {
 	display: block;
 }
 
-#page-title {
-	color: #ccc;
+.menuitem button {
+	border: none;
+	background-color: inherit;
+	color: #fff;
+	outline: none;
+	text-align: right;
 }
 
-.split {
-	position: absolute;
-	top: 30px;
-	left: 0;
-	width: 100%;
-	height: calc(100% - 30px);
+.menuitem button:active {
+	color: #aaa;
+}
+
+/* Tab bar */
+.tabbar {
+	background-color: #444;
+	z-index: 0;
+	height: 35px;
 	display: flex;
 	flex-direction: row;
+	overflow-x: scroll;
+}
+
+.tab {
+	font-family: "Baloo Paaji 2", sans-serif;
+	font-size: 12px;
+	color: white;
+	padding: 2px 8px;
+	user-select: none;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.tab.active {
+	background-color: #222;
+}
+
+.tab:hover {
+	background-color: #111;
+}
+
+.tab button {
+	border: none;
+	background-color: inherit;
+	color: #fff;
+	outline: none;
+	text-align: right;
+	padding: 0;
+	margin: 0px 5px 0px 5px;
+}
+
+.tab button:active {
+	color: #aaa;
+}
+
+/* Editor & preview windows */
+.split {
+	position: absolute;
+	top: 29px;
+	left: 0;
+	width: 100%;
+	height: calc(100% - 29px);
+	display: flex;
+	flex-direction: row;
+	z-index: 0;
 }
 
 .box {
@@ -103,12 +162,95 @@ body {
 	height: 100%;
 }
 
-.split, .gutter.gutter-horizontal {
+.split, .gutter.gutter-horizontal{
     float: left;
 }
+
 .gutter.gutter-horizontal {
+	z-index: 100;
 	background-color: #777;
     cursor: ew-resize;
+}
+
+#page-title {
+	color: #ccc;
+}
+
+#preview-box {
+	display: flex;
+	flex-direction: column;
+}
+
+#preview {
+	width: 100%;
+	flex-grow: 1;
+	height: auto;
+	border: none;
+}
+
+#console {
+	width: 100%;
+	height: 20%;
+	background-color: #eee;
+	font-family: monospace;
+	overflow-y: scroll;
+	border-top: 2px solid #aaa;
+}
+
+.console-error {
+	margin: 5px;
+	color: red;
+}
+
+.tab .fas {
+	color: #777;
+}
+
+.tab .fas:hover {
+	color: #bbb;
+}
+
+.tab.preview .fa-paint-brush {
+	color: white;
+}
+
+
+/*************************
+* Custom scrollbars      *
+* (webkit browsers only) *
+*************************/
+
+/* width */
+#editor-box ::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+/* Track */
+#editor-box ::-webkit-scrollbar-track {
+	background-color: #333; 
+}
+ 
+/* Handle */
+#editor-box ::-webkit-scrollbar-thumb {
+	background-color: black; 
+}
+
+/* Handle on hover */
+#editor-box ::-webkit-scrollbar-thumb:hover {
+	background-color: #555; 
+}
+
+#editor-box ::-webkit-scrollbar-corner {
+	background-color: black;
+}
+
+
+/**********************
+* Convenience classes *
+**********************/
+.hidden {
+	display: none;
 }
 
 .shortcut {

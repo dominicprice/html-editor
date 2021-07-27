@@ -80,10 +80,51 @@ function removeCache(key)
 	localStorage.removeItem(key);
 }
 
-
 /*******************
 * Editor utilities *
 *******************/
+
+function currentTime() {
+	let d = new Date();
+	return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+}
+
+function ConsoleWrapper() {
+	let header = document.createElement("div");
+	header.classList.add("console-header");
+	header.innerHTML = `Refreshed preview at ${currentTime()}`;
+	pconsole.appendChild(header);
+
+	this.log = function(...args) {
+		let child = document.createElement("div");
+		child.classList.add("console-log");
+		child.innerHTML = `(${this.currentTime()}) ${args.join(" ")}`;
+		pconsole.appendChild(child);
+	}
+	
+	this.error = function(msg, src, lineno, colno, err) {
+		let child = document.createElement("div");
+		child.classList.add("console-error");
+		if (src === undefined || lineno === undefined || colno === undefined || err === undefined) {
+			child.innerHTML = `(${currentTime()}) ${msg}`;
+		}
+		else {
+			if (src === "about:srcdoc")
+				src = tabPreview.name;
+			else for (const tab of tabs) {
+				if (src === tab.url) {
+					src = tab.name;
+					break;
+				}
+			}
+			child.innerHTML = `(${currentTime()}) [${src}:${lineno}:${colno}] ${err.name}: ${msg}`;
+		}
+		pconsole.appendChild(child);
+	}
+	
+	return this;
+}
+
 
 var editorDefaultOptions = {
 	indentUnit: 4,
@@ -112,23 +153,6 @@ function editorOnResizeEvent() {
 	editor.setSize(bounding_box.width, bounding_box.height - 35);
 }
 
-function previewOnError(msg, src, lineno, colno, err) {
-	if (src === "about:srcdoc")
-		src = tabPreview.name;
-	else {
-		for (const tab of tabs) {
-			if (src === tab.url) {
-				src = tab.name;
-				break;
-			}
-		}
-	}
-	
-	pconsole.innerHTML += 
-		`<div class="console-error">[${src}:${lineno}:${colno}] ${err.name}: ${msg}</div>`;
-	return false;
-}
-
 /// Callback to update the preview window with the rendered contents
 /// of the editor
 function editorOnChange() {
@@ -141,10 +165,9 @@ function editorOnChange() {
 		return;
 	for (const tab of tabs) 
 		src = src.split(tab.name).join(tab.url);
-	preview.srcdoc = src;
+	preview.srcdoc = "<script>window.console = window.parent.ConsoleWrapper();</script><script>window.onerror = window.console.error</script>"+src;
 	pconsole.innerHTML = "";
 	$(preview).ready(function() {
-		preview.contentWindow.onerror = previewOnError;
 	});
 }
 
@@ -176,7 +199,6 @@ function editorYesNo(prompt, callback) {
 		}
 	);
 }
-
 
 /*******************
 *  Menu callbacks  *

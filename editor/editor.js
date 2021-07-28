@@ -84,47 +84,187 @@ function removeCache(key)
 * Editor utilities *
 *******************/
 
+function escapeHtml(...html){
+	var text = document.createTextNode(html.join(" "));
+	var p = document.createElement('p');
+	p.appendChild(text);
+	return p.innerHTML;
+}
+
 function currentTime() {
 	let d = new Date();
 	return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
 }
 
 function ConsoleWrapper() {
-	let header = document.createElement("div");
-	header.classList.add("console-header");
-	header.innerHTML = `Refreshed preview at ${currentTime()}`;
-	pconsole.appendChild(header);
-
-	this.log = function(...args) {
-		let child = document.createElement("div");
-		child.classList.add("console-log");
-		child.innerHTML = `(${this.currentTime()}) ${args.join(" ")}`;
-		pconsole.appendChild(child);
-	}
+	let that = this;
 	
-	this.error = function(msg, src, lineno, colno, err) {
-		let child = document.createElement("div");
-		child.classList.add("console-error");
-		if (src === undefined || lineno === undefined || colno === undefined || err === undefined) {
-			child.innerHTML = `(${currentTime()}) ${msg}`;
+	this._counts = {};
+	this._indentSize = 3;
+	this._nGroups = 0;
+	this._timers = {};
+	
+	this._append = function(cell_type, msg, prependTime) {
+		let indent = that._indentSize * that._nGroups;
+		if (prependTime) {
+			let d = new Date();
+			let hh = String(d.getHours()).padStart(2, '0');
+			let mm = String(d.getMinutes()).padStart(2, '0');
+			let ss = String(d.getSeconds()).padStart(2, '0');
+			msg = `(${hh}:${mm}:${ss})&nbsp;` + "&nbsp;".repeat(indent) + msg.replaceAll("\n", "<br>" + "&nbsp;".repeat(indent + 11));
 		}
 		else {
-			if (src === "about:srcdoc")
-				src = tabPreview.name;
-			else for (const tab of tabs) {
-				if (src === tab.url) {
-					src = tab.name;
-					break;
-				}
-			}
-			child.innerHTML = `(${currentTime()}) [${src}:${lineno}:${colno}] ${err.name}: ${msg}`;
+			msg = "&nbsp;".repeat(indent) + msg.replaceAll("\n", "<br>" + "&nbsp;".repeat(indent));
 		}
-		pconsole.appendChild(child);
+		let cell = document.createElement("div");
+		cell.classList.add(`console-${cell_type}`, "console-cell");
+		cell.innerHTML = msg;
+		pconsole.appendChild(cell);
+	};
+	
+	this._uncaughtException = function(msg, src, lineno, colno, err) {	
+		if (src === "about:srcdoc")
+			src = tabpreview.name;
+		else for (const tab of tabs) {
+			if (src === tab.url) {
+				src = tab.name;
+				break;
+			}
+		}
+		that.error(`[${src}:${lineno}:${colno}] ${err.name}: ${msg}`);
+		return true;
 	}
 	
+	this._notImplementedError = function(method) {
+		this.error(`Method console.${method} not currently implemented.`);
+	}
+	
+	this.assert = function(assertion, ...objs) {
+		if (!assertion)
+			that.error("Assertion error: ", ...objs);
+	}
+	
+	this.clear = function() {
+		pconsole.innerHTML = "";
+	}
+	
+	this.count = function(label) {
+		if (!that._counts.hasOwnProperty(label))
+			that._counts[label] = 0;
+		that.log(JSON.stringify(label) + ": " + ++that._counts[label]);
+	}
+	
+	this.countReset = function(label) {
+		delete that._counts[label];
+	}
+	
+	this.debug = function(...objs) {
+		that._append("debug", escapeHtml(...objs), true);
+	}
+	
+	this.dir = function(obj) {
+		let res = "";
+		for (const key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				try {
+					if (typeof obj === "object" && obj !== null && !obj.isArray())
+						throw TypeError();
+					res += `<strong>${escapeHtml(key)}</strong>: ${escapeHtml(JSON.stringify(obj[key]))}\n`;
+				}
+				catch (error) {
+					console.log("object of type", typeof obj);
+					res += `<strong>${escapeHtml(key)}</strong>: ${escapeHtml(obj[key])}\n`;
+				}
+			}
+		}
+		that._append("log", res, true);
+	}
+	
+	this.dirxml = function(...objs) {
+		that._notImplementedError("dirxml");
+	}
+	
+	this.error = function(...args) {
+		that._append("error", escapeHtml(...args), true);
+	}
+	
+	this.group = function() {
+		++that._nGroups;
+	}
+	
+	this.groupCollapsed = function() {
+		that._notImplementedError("groupCollapsed")
+	}
+	
+	this.groupEnd = function() {
+		if (that._nGroups == 0) 
+			that.error("Called console.groupEnd with no active groups");
+		else
+			--that._nGroups;
+	}
+	
+	this.info = function(...objs) {
+		that._append("info", escapeHtml(...objs), true);
+	}
+	
+	this.log = function(...objs) {
+		that._append("log", escapeHtml(...objs), true);
+	}
+	
+	this.profile = function() {
+		that._notImplementedError("profile");
+	}
+	
+	this.profileEnd = function() {
+		that._notImplementedError("profileEnd");
+	}
+	
+	this.table = function(data, columns) {
+		that._notImplementedError("table");
+	}
+	
+	this.time = function(label) {
+		that._timers[label] = [Date.now(), null];
+	}
+	
+	this.timeEnd = function(label) {
+		if (!that._timers.hasOwnProperty(label)) {
+			that.error(`No timer named ${label} exists.`);
+		}
+		else {
+			that._timers[label][1] = Date.now();
+			that.timeLog(label);
+		}
+	}
+	
+	this.timeLog = function(label) {
+		if (!that._timers.hasOwnProperty(label)) {
+			that.error(`No timer named ${label} exists.`);
+		}
+		else {
+			if (that._timers[label][1] === null)
+				that.log(`${label}: ${Date.now() - that._timers[label][0]}ms`);
+			else
+				that.log(`${label}: ${that._timers[label][1] - that._timers[label][0]}ms`);
+		}
+	}
+	
+	this.timeStamp = function() {
+		that._notImplementedError("timeStamp");
+	}
+	
+	this.trace = function() {
+		that._notImplementedError("trace");
+	}
+	
+	this.warn = function(...objs) {
+		that._append("warn", escapeHtml(...objs), true);
+	}
+	
+	
+	this._append("info", "Page refreshed", true);
 	return this;
 }
-
 
 var editorDefaultOptions = {
 	indentUnit: 4,
@@ -165,7 +305,7 @@ function editorOnChange() {
 		return;
 	for (const tab of tabs) 
 		src = src.split(tab.name).join(tab.url);
-	preview.srcdoc = "<script>window.console = window.parent.ConsoleWrapper();</script><script>window.onerror = window.console.error</script>"+src;
+	preview.srcdoc = "<script>window.console = window.parent.ConsoleWrapper();</script><script>window.onerror = window.console._uncaughtException</script>"+src;
 	pconsole.innerHTML = "";
 	$(preview).ready(function() {
 	});

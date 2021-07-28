@@ -198,17 +198,28 @@ body {
 	padding: 3px;
 }
 
-.console-header {
+.console-cell:hover {
+	background-color: #ddd;
+}
+
+.console-info {
 	color: blue;
-	font-weight: bold;
 }
 
 .console-log {
 	color: black;
 }
 
+.console-debug {
+	color: purple;
+}
+
 .console-error {
 	color: red;
+}
+
+.console-warn {
+	color: orange;
 }
 
 .tab .fas {

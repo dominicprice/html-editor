@@ -120,6 +120,7 @@ function ConsoleWrapper() {
 		cell.classList.add(`console-${cell_type}`, "console-cell");
 		cell.innerHTML = msg;
 		pconsole.appendChild(cell);
+		pconsole.scrollTop = pconsole.scrollHeight;
 	};
 	
 	this._uncaughtException = function(msg, src, lineno, colno, err) {	
